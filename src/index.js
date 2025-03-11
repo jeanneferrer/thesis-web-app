@@ -30,12 +30,10 @@ startButton.addEventListener('click', () => {
       })
       .catch((error) => {
         console.error('Error accessing the camera:', error);
-        errorMessage.textContent = 'Unable to access the camera. Please check permissions.';
-        errorContainer.style.display = 'block';
+        showError('Unable to access the camera. Please check permissions.');
       });
   } else {
-    errorMessage.textContent = 'Camera access is not supported in this browser.';
-    errorContainer.style.display = 'block';
+    showError('Camera access is not supported in this browser.');
   }
 });
 
@@ -52,46 +50,69 @@ stopButton.addEventListener('click', () => {
 captureButton.addEventListener('click', () => {
   const context = canvas.getContext('2d');
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  cameraContainer.style.display = 'none';
-  captureContainer.style.display = 'block';
-  resultsContainer.style.display = 'none'; // Hide results until processed.
-  sendImageToBackend(canvas.toDataURL('image/jpeg'));
+
+  canvas.toBlob((blob) => {
+    if (!blob) {
+      showError('Failed to capture image.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = () => {
+      const base64data = reader.result.split(',')[1]; // Extract Base64
+      sendImageToBackend(base64data);
+    };
+  }, 'image/jpeg');
 });
 
-function sendImageToBackend(imageDataUrl) {
-  fetch('/process_image', {
+function sendImageToBackend(base64data) {
+  if (!base64data) {
+    showError('Error: No Base64 data generated.');
+    return;
+  }
+
+  fetch('http://127.0.0.1:5000/process_image', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ image: imageDataUrl }),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image: base64data }) 
   })
-    .then((response) => response.json())
-    .then((data) => {
-      displayResults(data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-      errorMessage.textContent = 'Error processing image.';
-      errorContainer.style.display = 'block';
-      cameraContainer.style.display = 'block'; // Show camera again on error
-      captureContainer.style.display = 'none';
-    });
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      throw new Error(data.error);
+    }
+    displayResults(data);
+  })
+  .catch(error => {
+    console.error('Error sending image:', error);
+    showError('Error processing image. Ensure the backend is running.');
+  });
 }
 
 function displayResults(data) {
+  if (!data.compressed_image) {
+    showError('No processed image received.');
+    return;
+  }
+
   compressedImage.src = data.compressed_image;
   metricsDiv.innerHTML = `
-        <p>Compression Ratio: ${data.compression_ratio}</p>
-        <p>PSNR: ${data.psnr}</p>
-        <p>SSIM: ${data.ssim}</p>
-        <p>Memory Usage: ${data.memory_usage} MB</p>
-        <p>Detection Time Without Compression: ${data.detection_time_without_compression} seconds</p>
-        <p>Compression Time: ${data.compression_time} seconds</p>
-        <p>Detection Time With Compression: ${data.detection_time_with_compression} seconds</p>
-    `;
+      <p>Compression Ratio: ${data.compression_ratio || 'N/A'}</p>
+      <p>PSNR: ${data.psnr || 'N/A'}</p>
+      <p>SSIM: ${data.ssim || 'N/A'}</p>
+      <p>Memory Usage: ${data.memory_usage || 'N/A'} MB</p>
+      <p>Detection Time Without Compression: ${data.detection_time_without_compression || 'N/A'} sec</p>
+      <p>Compression Time: ${data.compression_time || 'N/A'} sec</p>
+      <p>Detection Time With Compression: ${data.detection_time_with_compression || 'N/A'} sec</p>
+  `;
+
   captureContainer.style.display = 'none';
   resultsContainer.style.display = 'block';
   errorContainer.style.display = 'none';
-  cameraContainer.style.display = 'block';
+}
+
+function showError(message) {
+  errorMessage.textContent = message;
+  errorContainer.style.display = 'block';
 }

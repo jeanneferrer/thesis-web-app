@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+#camera-container, #capture-container, #results-container {
+    margin-top: 20px;
+}
+video, canvas, img {
+    border: 1px solid black;
+}
+#metrics {
+    margin-top: 20px;
+    font-size: 14px;
+}
+#error-container {
+    color: red;
+    font-weight: bold;
+    display: none;
+}
+button {
+    margin: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
