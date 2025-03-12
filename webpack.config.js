@@ -4,17 +4,12 @@ const Dotenv = require('dotenv-webpack');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: './src/index.js', // Path to your entry JS file
+  entry: './src/index.js',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './src/index.html', // Ensure this path matches the location of index.html
-    }),
-  ],
   mode: 'development',
   module: {
     rules: [
@@ -25,9 +20,14 @@ module.exports = {
     ],
   },
   plugins: [
-    new Dotenv(), // Loads .env variables
+    new HtmlWebpackPlugin({
+      template: './src/index.html', // This ensures index.html is copied correctly
+      filename: 'index.html',
+      inject: 'body', // Ensures <script> is added to the body
+    }),
+    new Dotenv(),
     new webpack.DefinePlugin({
-      'process.env.BACKEND_URL': JSON.stringify(process.env.BACKEND_URL || 'http://127.0.0.1:5000')
-    })
-  ]
+      'process.env.BACKEND_URL': JSON.stringify(process.env.BACKEND_URL || 'http://127.0.0.1:5000'),
+    }),
+  ],
 };

@@ -77,9 +77,9 @@ function sendImageToBackend(base64data) {
   const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:5000";
 
   fetch(`${backendUrl}/process_image`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ image: base64data }) 
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image: base64data }) 
   })
   .then(response => response.json())
   .then(data => {
