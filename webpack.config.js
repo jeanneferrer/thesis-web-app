@@ -8,6 +8,7 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    publicPath: './',  // 👈 Ensures paths are relative for GitHub Pages
     clean: true,
   },
   mode: 'development',
@@ -21,9 +22,9 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html', // This ensures index.html is copied correctly
+      template: './src/index.html',
       filename: 'index.html',
-      inject: 'body', // Ensures <script> is added to the body
+      inject: 'body',
     }),
     new Dotenv(),
     new webpack.DefinePlugin({
