@@ -1,5 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.js', // Path to your entry JS file
@@ -22,4 +24,10 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new Dotenv(), // Loads .env variables
+    new webpack.DefinePlugin({
+      'process.env.BACKEND_URL': JSON.stringify(process.env.BACKEND_URL || 'http://127.0.0.1:5000')
+    })
+  ]
 };
