@@ -1,27 +1,56 @@
+:root {
+    /* figure out color palette */
+    --light-beige: #eaeaea;
+    --dark-beige: #e3d2c3;
+    --teal: #2daa9e;
+    --turqoise: #66d2ce;
+}
+
 body {
     font-family: Arial, sans-serif;
     text-align: center;
+    background-color: var(--light-beige);
 }
+
 #camera-container, #capture-container, #results-container {
     margin-top: 20px;
 }
+
 video, canvas, img {
     border: 1px solid black;
 }
+
 #metrics {
     margin-top: 20px;
     font-size: 14px;
 }
+
 #error-container {
     color: red;
     font-weight: bold;
     display: none;
 }
+
 button {
     margin: 5px;
     padding: 10px;
     cursor: pointer;
+    background-color: var(--teal);
+    border-radius: 5px;
+    border: 0px;
+    transition: background-color 0.5s ease;
 }
+
+button:hover {
+    background-color: var(--turqoise);
+    transition: background-color 0.5s ease;
+    cursor: pointer;
+}
+
+button:disabled:hover {
+    cursor: not-allowed;
+}
+
 button:disabled {
     cursor: not-allowed;
     opacity: 0.5;

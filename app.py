@@ -66,7 +66,7 @@ def process_image():
         detected_image = detect_objects(image.copy())
         detection_time_without_compression = time.perf_counter() - start_time
 
-        resized_image = cv2.resize(image, (500, 500))
+        resized_image = cv2.resize(image, (640, 480))
         compressed_path = "compressed_image.jpg"
         start_time = time.perf_counter()
         cv2.imwrite(compressed_path, resized_image, [cv2.IMWRITE_JPEG_QUALITY, 50])
