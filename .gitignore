@@ -3,3 +3,5 @@ __pycache__/
 new_venv/
 uploads/
 *.jpg
+.dockerignore
+Dockerfile

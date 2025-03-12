@@ -18,7 +18,7 @@ let stream;
 startButton.addEventListener('click', () => {
   if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices
-      .getUserMedia({ video: true })
+      .getUserMedia({ video: { facingMode: "environment" } }) // Force rear camera
       .then((mediaStream) => {
         stream = mediaStream;
         video.srcObject = stream;
@@ -74,7 +74,7 @@ function sendImageToBackend(base64data) {
     return;
   }
 
-  fetch('http://127.0.0.1:5000/process_image', {
+  fetch('https://thesis-web-app-qpsc.onrender.com/process_image', { // http://127.0.0.1:5000/process_image
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ image: base64data }) 

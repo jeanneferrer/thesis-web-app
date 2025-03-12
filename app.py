@@ -44,9 +44,9 @@ def detect_objects(image):
             cv2.putText(image, text, (startX, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
     return image
 
-@app.route('/')
-def home():
-    return "Flask server is running!"
+@app.route("/")
+def hello():
+    return "Hello from Cloud Run!"
 
 @app.route('/process_image', methods=['POST'])
 def process_image():
@@ -104,6 +104,6 @@ def process_image():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 10000))  # Use Render's assigned port
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8080))  # Ensure it uses 8080
     app.run(host="0.0.0.0", port=port)
